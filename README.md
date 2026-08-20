@@ -1,51 +1,51 @@
 # StorePulse
 
-StorePulse показывает оценку и число отзывов приложения в разных региональных витринах **App Store** и **Google Play**.
+StorePulse compares an app's rating and review count across regional **App Store** and **Google Play** storefronts.
 
-Пользователь вводит название приложения, выбирает его из результатов и получает таблицу с данными по России, США, Великобритании, Германии, Франции и Японии. Если витрина не возвращает оценку или число отзывов, в таблице отображается `—`.
+Enter an app name, select a matching listing, and receive a country-by-country table of ratings and review counts. The service covers 74 markets, including Europe, North America, Australia, New Zealand, the Gulf, Russia, China, Japan, and South Korea. If a storefront does not return a rating or review count, the table shows `—`.
 
-## Стек
+## Stack
 
 - Next.js 14 + React + TypeScript
-- Apple: публичный iTunes Search API
+- Apple: public iTunes Search API
 - Google Play: `google-play-scraper`
-- Деплой: Vercel
+- Deployment: Vercel
 
-## Локальный запуск
+## Run locally
 
-Требуется Node.js 18.17 или новее.
+Node.js 18.17 or newer is required.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
-Проверка production-сборки:
+Verify the production build:
 
 ```bash
 npm run build
 npm run start
 ```
 
-## Деплой на Vercel
+## Deploy to Vercel
 
-1. Загрузите этот проект в GitHub/GitLab/Bitbucket.
-2. В Vercel выберите **Add New → Project** и импортируйте репозиторий.
-3. Framework Preset будет определён как **Next.js** автоматически.
-4. Нажмите **Deploy**. Переменные окружения для текущего MVP не требуются.
+1. Push this project to GitHub, GitLab, or Bitbucket.
+2. In Vercel, select **Add New → Project** and import the repository.
+3. Vercel will detect the **Next.js** framework preset automatically.
+4. Select **Deploy**. No environment variables are required for the current MVP.
 
-Также можно выполнить деплой через CLI:
+You can also deploy through the CLI:
 
 ```bash
 npx vercel
 ```
 
-## Как устроены данные
+## Data model
 
-- `/api/search` ищет приложения сразу в обеих витринах.
-- `/api/ratings` параллельно запрашивает метрики для каждой страны.
-- Ответы Apple кэшируются на 15 минут, а результаты поиска — на час.
+- `/api/search` looks up apps in both storefronts at once.
+- `/api/ratings` requests metrics for each supported country in parallel.
+- Apple responses are cached for 15 minutes and search results for one hour.
 
-Google Play не предоставляет стабильный публичный официальный API для этих метрик, поэтому используется парсер публичной витрины. Его ответы и доступность могут зависеть от ограничений Google Play. Для высоконагруженного production-сервиса стоит добавить кэш (например, Vercel KV) и/или выделенного поставщика store-данных.
+Google Play does not provide a stable official public API for these metrics, so the project uses a public-storefront scraper. Availability and responses may be affected by Google Play restrictions. For a high-traffic production service, add a persistent cache (such as Vercel KV) and/or a dedicated store-data provider.

@@ -1,0 +1,15 @@
+# StorePulse
+
+StorePulse is a web application for comparing an app's rating and review count across local Apple App Store and Google Play storefronts.
+
+## How it works
+
+1. Search for an app by name.
+2. Select the matching App Store or Google Play listing.
+3. StorePulse retrieves the current rating and review-count data for more than 70 country storefronts.
+
+## Data notes
+
+- Ratings and review counts are retrieved from public storefront data at request time.
+- A dash (`—`) means the selected storefront did not return rating data for that app.
+- StorePulse does not publish editorial rankings or modify source storefront data.
