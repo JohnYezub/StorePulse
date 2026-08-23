@@ -46,6 +46,9 @@ npx vercel
 
 - `/api/search` looks up apps in both storefronts at once.
 - `/api/ratings` requests metrics for each supported country in parallel.
+- `/api/details` returns the app profile: screenshots, developer, release and update dates, version, size, price, category, age rating, description and in-app purchases.
 - Apple responses are cached for 15 minutes and search results for one hour.
+
+The iTunes Search API does not expose in-app purchases, so for App Store apps the profile also reads the `serialized-server-data` block embedded in the public `apps.apple.com` product page (US storefront, cached for one hour). If that block is missing or changes shape, the rest of the profile still renders and the purchases row is simply omitted. Google Play purchases come from the scraper as an `offersIAP` flag and a price range rather than an itemised list.
 
 Google Play does not provide a stable official public API for these metrics, so the project uses a public-storefront scraper. Availability and responses may be affected by Google Play restrictions. For a high-traffic production service, add a persistent cache (such as Vercel KV) and/or a dedicated store-data provider.
