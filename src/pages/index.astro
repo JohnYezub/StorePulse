@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RatingExplorer from "../components/RatingExplorer";
+
+const title = "AppRatingMap — App ratings by country";
+const description = "Compare app ratings and review counts across 74 App Store and Google Play storefronts worldwide.";
+---
+<Layout title={title} description={description}>
+  <main>
+    <nav>
+      <span class="logo">app<span>rating</span>map</span>
+      <span class="nav-note">App Store · Google Play</span>
+    </nav>
+    <RatingExplorer client:load />
+  </main>
+</Layout>

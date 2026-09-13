@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { APIRoute } from "astro";
 import gplay from "google-play-scraper";
+import { json } from "../../lib/json";
 
-export const runtime = "nodejs";
+export const prerender = false;
 
 type Result = { id: string; store: "apple" | "google"; name: string; developer: string; icon?: string };
 
-export async function GET(request: NextRequest) {
-  const term = request.nextUrl.searchParams.get("q")?.trim();
-  if (!term || term.length < 2) return NextResponse.json([]);
+export const GET: APIRoute = async ({ url }) => {
+  const term = url.searchParams.get("q")?.trim();
+  if (!term || term.length < 2) return json([]);
 
   const [apple, google] = await Promise.allSettled([
-    fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=software&limit=8`, { next: { revalidate: 3600 } })
-      .then((r) => r.json()),
+    fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=software&limit=8`).then((r) => r.json()),
     gplay.search({ term, num: 8, country: "us", lang: "en" })
   ]);
 
@@ -22,5 +22,5 @@ export async function GET(request: NextRequest) {
   if (google.status === "fulfilled") {
     for (const item of google.value) results.push({ id: item.appId, store: "google", name: item.title, developer: item.developer, icon: item.icon });
   }
-  return NextResponse.json(results);
-}
+  return json(results, { maxAge: 3600 });
+};

@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { APIRoute } from "astro";
 import gplay from "google-play-scraper";
+import { json } from "../../lib/json";
 
-export const runtime = "nodejs";
+export const prerender = false;
 
 type Purchase = { name: string; price: string };
 type Details = {
@@ -55,7 +56,7 @@ function collectPurchases(node: unknown, found: { summary: string | null; items:
 
 async function applePurchases(id: string) {
   try {
-    const r = await fetch(`https://apps.apple.com/us/app/id${encodeURIComponent(id)}`, { headers: browser, next: { revalidate: 3600 } });
+    const r = await fetch(`https://apps.apple.com/us/app/id${encodeURIComponent(id)}`, { headers: browser });
     if (!r.ok) return null;
     const page = await r.text();
     const embedded = page.match(/<script[^>]*id="serialized-server-data"[^>]*>([\s\S]*?)<\/script>/);
@@ -72,7 +73,7 @@ async function applePurchases(id: string) {
 }
 
 async function appleDetails(id: string): Promise<Details | null> {
-  const r = await fetch(`https://itunes.apple.com/lookup?id=${encodeURIComponent(id)}&country=us`, { next: { revalidate: 900 } });
+  const r = await fetch(`https://itunes.apple.com/lookup?id=${encodeURIComponent(id)}&country=us`);
   if (!r.ok) return null;
   const item = (await r.json()).results?.[0];
   if (!item) return null;
@@ -121,15 +122,15 @@ async function googleDetails(id: string): Promise<Details | null> {
   };
 }
 
-export async function GET(request: NextRequest) {
-  const id = request.nextUrl.searchParams.get("id");
-  const store = request.nextUrl.searchParams.get("store");
-  if (!id || (store !== "apple" && store !== "google")) return NextResponse.json({ error: "Invalid app" }, { status: 400 });
+export const GET: APIRoute = async ({ url }) => {
+  const id = url.searchParams.get("id");
+  const store = url.searchParams.get("store");
+  if (!id || (store !== "apple" && store !== "google")) return json({ error: "Invalid app" }, { status: 400 });
   try {
     const details = store === "apple" ? await appleDetails(id) : await googleDetails(id);
-    if (!details) return NextResponse.json({ error: "App not found" }, { status: 404 });
-    return NextResponse.json(details);
+    if (!details) return json({ error: "App not found" }, { status: 404 });
+    return json(details, { maxAge: 3600 });
   } catch {
-    return NextResponse.json({ error: "Details could not be loaded" }, { status: 502 });
+    return json({ error: "Details could not be loaded" }, { status: 502 });
   }
-}
+};

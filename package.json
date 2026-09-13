@@ -1,19 +1,20 @@
 {
-  "name": "storepulse",
+  "name": "appratingmap",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
   },
   "dependencies": {
+    "@astrojs/react": "^6.0.5",
+    "@astrojs/vercel": "^11.0.10",
+    "astro": "^7.3.2",
     "google-play-scraper": "^10.1.0",
-    "next": "^14.2.15",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "supports-color": "^9.4.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.16.10",

@@ -1,0 +1,44 @@
+---
+import "../styles/globals.css";
+
+type Props = { title: string; description: string };
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "AppRatingMap",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description: "Global app-store rating and review-count comparison across App Store and Google Play storefronts.",
+  url: Astro.site?.href,
+  featureList: "Compare app ratings by country, App Store analytics, Google Play analytics, review-count comparison"
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="app ratings by country, App Store ratings, Google Play ratings, app review analytics, global app intelligence" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="AppRatingMap" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
