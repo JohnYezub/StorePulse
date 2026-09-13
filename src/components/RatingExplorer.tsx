@@ -1,6 +1,5 @@
-"use client";
-
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
 
 type App = { id: string; store: "apple" | "google"; name: string; developer: string; icon?: string };
 type Row = { code: string; label: string; score: number | null; count: number | null };
@@ -56,7 +55,7 @@ function sortRows(rows: Row[], sort: Sort) {
   });
 }
 
-export default function Home() {
+export default function RatingExplorer() {
   const [query, setQuery] = useState("");
   const [apps, setApps] = useState<App[]>([]);
   const [selected, setSelected] = useState<App | null>(null);
@@ -107,8 +106,7 @@ export default function Home() {
     if (!value) return null;
     return <div className="fact" key={title}><p className="section-label">{title}</p>{href ? <a href={href} target="_blank" rel="noreferrer">{value}</a> : <b>{value}</b>}</div>;
   }
-  return <main>
-    <nav><span className="logo">store<span>pulse</span></span><span className="nav-note">App Store · Google Play</span></nav>
+  return <>
     <section className="hero">
       <p className="eyebrow">Global app intelligence</p>
       <h1>App ratings<br/><em>by country</em></h1>
@@ -147,5 +145,5 @@ export default function Home() {
       </div>}
       {!searched && !selected && <div className="hint"><span>01</span> Find an app <span>02</span> Select a storefront <span>03</span> Compare countries</div>}
     </section>
-  </main>;
+  </>;
 }

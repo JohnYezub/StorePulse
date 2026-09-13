@@ -1,15 +1,16 @@
-# StorePulse
+# AppRatingMap
 
-StorePulse is a web application for comparing an app's rating and review count across local Apple App Store and Google Play storefronts.
+AppRatingMap is a web application for comparing an app's rating and review count across local Apple App Store and Google Play storefronts.
 
 ## How it works
 
 1. Search for an app by name.
 2. Select the matching App Store or Google Play listing.
-3. StorePulse retrieves the current rating and review-count data for more than 70 country storefronts.
+3. AppRatingMap retrieves the current rating and review-count data for 74 country storefronts, plus the app profile: screenshots, developer, release and update dates, version, size, price, category, age rating and in-app purchases.
 
 ## Data notes
 
-- Ratings and review counts are retrieved from public storefront data at request time.
+- Ratings, review counts and app profiles are retrieved from public storefront data at request time.
 - A dash (`—`) means the selected storefront did not return rating data for that app.
-- StorePulse does not publish editorial rankings or modify source storefront data.
+- Results can be sorted by country, by rating or by review count; storefronts without data are always listed last.
+- AppRatingMap does not publish editorial rankings or modify source storefront data.

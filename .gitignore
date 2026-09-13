@@ -1,9 +1,9 @@
 # dependencies
 node_modules/
 
-# Next.js build output
-.next/
-out/
+# Astro build output
+dist/
+.astro/
 
 # local environment files
 .env
