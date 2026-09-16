@@ -37,6 +37,8 @@ const structuredData = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    {/* Adsterra popunder — one per page, and kept out of `astro dev` */}
+    {import.meta.env.PROD && <script is:inline src="https://pl31369628.profitableratecpmnetwork.com/87/13/6b/87136bdc93a50359573e3dddb2eaa884.js"></script>}
   </head>
   <body>
     <slot />
