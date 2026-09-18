@@ -7,7 +7,7 @@ import vercel from "@astrojs/vercel";
 export default defineConfig({
   site: "https://appratingmap.com",
   output: "static",
-  adapter: vercel(),
+  adapter: vercel({ webAnalytics: { enabled: true } }),
   integrations: [react()],
   // google-play-scraper pulls in es5-ext, whose directories literally named "#"
   // break the Vercel adapter's URL-based dependency tracing (it reads "#" as a
