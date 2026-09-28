@@ -45,6 +45,21 @@ function purchaseSummary(iap: Details["iap"]) {
   if (iap.range) return `Yes · ${iap.range}`;
   return iap.items.length > 0 ? `Yes · ${iap.items.length} items` : "Yes";
 }
+function csvCell(value: string | number | null) {
+  if (value === null) return "";
+  const text = String(value);
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+function buildCsv(rows: Row[], app: App) {
+  const store = app.store === "apple" ? "App Store" : "Google Play";
+  const head = ["Country code", "Country", "Rating", "Reviews", "App", "Store"];
+  const body = rows.map((row) => [row.code, row.label, row.score, row.count, app.name, store].map(csvCell).join(","));
+  return [head.join(","), ...body].join("\r\n");
+}
+function csvName(app: App) {
+  const slug = app.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+  return `appratingmap-${slug || "app"}-${app.store}-${new Date().toISOString().slice(0, 10)}.csv`;
+}
 function sortRows(rows: Row[], sort: Sort) {
   return [...rows].sort((a, b) => {
     if (sort.key === "label") return a.label.localeCompare(b.label) * sort.dir;
@@ -98,6 +113,19 @@ export default function RatingExplorer() {
     catch { setError("Ratings could not be loaded. Please try again."); }
     finally { setLoading(false); }
   }
+  function downloadCsv() {
+    if (!selected || sorted.length === 0) return;
+    // The BOM keeps Excel from mangling non-ASCII country names such as Türkiye.
+    const blob = new Blob(["\uFEFF" + buildCsv(sorted, selected)], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = csvName(selected);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
   function header(key: SortKey, title: string) {
     const active = sort.key === key;
     return <button type="button" className={active ? "sort active" : "sort"} onClick={() => toggleSort(key)} aria-sort={active ? (sort.dir === 1 ? "ascending" : "descending") : "none"}>{title}<i>{active ? (sort.dir === 1 ? "↑" : "↓") : "↕"}</i></button>;
@@ -138,7 +166,7 @@ export default function RatingExplorer() {
         </div>}
         {loading && <div className="loading">Collecting storefront data…</div>}
         {rows.length > 0 && <>
-          <div className="summary"><span>{rows.filter((r) => r.score !== null).length} storefronts with data</span><span>Updated just now</span></div>
+          <div className="summary"><span>{rows.filter((r) => r.score !== null).length} storefronts with data</span><span>Updated just now</span><button type="button" className="export" onClick={downloadCsv}>Export CSV</button></div>
           <div className="table"><div className="tr th">{header("label", "Country")}{header("score", "Rating")}{header("count", "Reviews")}</div>{sorted.map((row) => <div className="tr" key={row.code}><span><b>{row.code}</b>{row.label}</span><span>{row.score === null ? "—" : <><i className="star">★</i> {row.score.toFixed(1)}</>}</span><span>{row.count === null ? "—" : number.format(row.count)}</span></div>)}</div>
           <p className="footnote">“—” means the storefront did not return rating data.</p>
         </>}
